@@ -18,6 +18,9 @@ class Maze:
         if seed:
             random.seed(seed)
         self.createCells()
+    
+    def aStar(self, ):
+        pass
 
     def solve(self, i=0, j=0):
         self.animate(0.002)
@@ -57,61 +60,6 @@ class Maze:
                     current.drawMove(to_cell, undo=True)
         return False
 
-
-    
-    # def solve(self, i=0,j=0, prev_cell=None, anim_speed=0.2):
-    #     current = self.cells[i][j]
-    #     current.visited = True
-    #     neighbors = self.maze_graph[(i,j)]
-    #     valid_moves = []
-    #     for n in neighbors:
-    #         direction = n[0]
-    #         chosen_neighbor = n[1]
-    #         to_cell = self.cells[chosen_neighbor[0]][chosen_neighbor[1]]
-    #         if direction == "up":
-    #             if to_cell.has_bottom_wall == False and to_cell.visited == False:
-    #                 current.drawMove(to_cell)
-    #                 self.animate(anim_speed)
-    #                 self.solve(chosen_neighbor[0], chosen_neighbor[1], current)
-    #         elif direction == "down":
-    #             if to_cell.has_top_wall == False and to_cell.visited == False:
-    #                 if to_cell == self.cells[-1][-1]:
-    #                     current.drawMove(to_cell)
-    #                     self.animate(anim_speed)
-    #                     solved = True
-    #                     print("top finish")
-    #                 else:
-    #                     current.drawMove(to_cell)
-    #                     self.animate(anim_speed)
-    #                     self.solve(chosen_neighbor[0], chosen_neighbor[1], current)
-    #         elif direction == "right":
-    #             if to_cell.has_left_wall == False and to_cell.visited == False:
-    #                 if to_cell == self.cells[-1][-1]:
-    #                     current.drawMove(to_cell)
-    #                     self.animate(anim_speed)
-    #                     print("right finish")
-    #                     solved = True
-    #                 else:
-    #                     current.drawMove(to_cell)
-    #                     self.animate(anim_speed)
-    #                     self.solve(chosen_neighbor[0], chosen_neighbor[1], current)
-    #         else:
-    #             if to_cell.has_right_wall == False and to_cell.visited == False:
-    #                 current.drawMove(to_cell)
-    #                 self.animate(anim_speed)
-    #                 self.solve(chosen_neighbor[0], chosen_neighbor[1], current)
-    #         if to_cell == self.cells[-1][-1]:
-    #             solved = True
-    #             return 
-    #     if prev_cell and solved == False:
-    #         print("overwriting")
-    #         current.drawMove(prev_cell, undo=True)
-    #         self.animate(anim_speed)
-
-
-
-
-
     def createCells(self):
         # i is number of columns (x-direction)
         # j is number of rows (y-direction)
@@ -142,7 +90,7 @@ class Maze:
     
     def showGraph(self):
         for k,v in self.maze_graph.items():
-                    print(f"node: {k} | values: {v}")
+            print(f"node: {k} | values: {v}")
         
     def breakEntranceAndExit(self):
         entrance_cell, exit_cell = self.updateEntranceAndExit()

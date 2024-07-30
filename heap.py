@@ -1,14 +1,9 @@
 from graphviz import Digraph
 
 def create_graph(min_heap, file_name = "output"):
-    print(min_heap)
     dot = Digraph()
-
-    # Add nodes
     for i in range(len(min_heap)):
         dot.node(str(i), str(min_heap[i]))
-
-    # Add edges
     for i in range(len(min_heap)):
         left = 2 * i + 1
         right = 2 * i + 2
@@ -16,17 +11,14 @@ def create_graph(min_heap, file_name = "output"):
             dot.edge(str(i), str(left))
         if right < len(min_heap):
             dot.edge(str(i), str(right))
-
-    # Save as .svg file
     dot.render(file_name, format='svg')
 
 class Node:
-    def __init__(self, value, data) -> None:
+    def __init__(self, value, data=None) -> None:
         self.val = value
         self.data = data
     def __repr__(self) -> str:
         return f"{self.val}"
-
 
 class MinHeap:
     def __init__(self) -> None:
@@ -81,14 +73,4 @@ class MinHeap:
     def addNode(self, node):
         self.heap.append(node)
         self.bubbleUp()
-
-if __name__ == "__main__":
-    nodes = [(35, "E"),(15, "M"), (22, "A"), (27,"C"), (40, "F"), (29, "G"), (76, "Z")]
-    nodes = [Node(i[0], i[1]) for i in nodes]
-    min_heap = MinHeap()
-    for n in nodes:
-        min_heap.addNode(n)
-    min_heap.removeMin()
-    create_graph(min_heap.heap, file_name = "output2")
-    min_heap.heapify()
-    create_graph(min_heap.heap, file_name = "output3")
+        self.heapify()
