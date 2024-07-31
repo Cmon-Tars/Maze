@@ -31,15 +31,12 @@ class Maze:
         while current in came_from.keys():
             current = came_from[current]
             path.insert(0,current)
-
         for i, s in enumerate(path):
             if i+1 < len(path):
                 current = self.cells[s[0]][s[1]]
                 tc_idx = path[i+1]
                 to_cell = self.cells[tc_idx[0]][tc_idx[1]]
             current.drawMove(to_cell)
-        print(path)
-        return path
 
     def taxicabDist(self,i,j):
         return (self.num_cols-i) + (self.num_rows-j) - 2
@@ -59,8 +56,7 @@ class Maze:
         while heap.heapSize() > 0:
             current = heap.getMin()
             if current.data == (self.num_cols-1, self.num_rows-1):
-                print("path found")
-                return self.showPath(came_from, current.data)
+                self.showPath(came_from, current.data)
             heap.removeMin()
             neighbors = self.maze_graph[current.data]
             for n in neighbors:
