@@ -23,10 +23,11 @@ class MinHeap:
     def removeMin(self):
         if self.heapSize() == 0:
             return None
-        if self.heapSize() == 0:
+        if self.heapSize() == 1:
             return self.heap.pop()
+        
         self.heap.pop(0)
-        self.heap[0] = self.heap.pop()
+        self.heap.insert(0,self.heap.pop()) 
         self.downHeap(0)
     
     def parent(self, i):

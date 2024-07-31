@@ -32,8 +32,8 @@ class Cell:
         self.win = win
         self.visited = False
     
-    ##def __repr__(self) -> str:
-       # return f"Cell tl_cr: {self.x1, self.y1}" #, {self.x2, self.y2}]" # | Cell Walls: {[self.has_left_wall, self.has_right_wall, self.has_top_wall, self.has_bottom_wall]}"
+    def __repr__(self) -> str:
+        return f"Cell Walls: {[self.has_left_wall, self.has_right_wall, self.has_top_wall, self.has_bottom_wall]}"
     
     def draw(self, fill_color: str = "black"):
         if self.has_left_wall:

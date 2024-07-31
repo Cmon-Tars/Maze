@@ -25,11 +25,20 @@ class Maze:
             self.dfs()
         if algo == "A*":
             self.aStar()
+
     def showPath(self, came_from, current):
         path = [current]
         while current in came_from.keys():
             current = came_from[current]
             path.insert(0,current)
+
+        for i, s in enumerate(path):
+            if i+1 < len(path):
+                current = self.cells[s[0]][s[1]]
+                tc_idx = path[i+1]
+                to_cell = self.cells[tc_idx[0]][tc_idx[1]]
+            current.drawMove(to_cell)
+        print(path)
         return path
 
     def taxicabDist(self,i,j):
@@ -40,23 +49,23 @@ class Maze:
         came_from = {}
         gscore = {}
         fscore = {}
-        i,j = 0,0
         d = 1
         for k in self.maze_graph:
-            gscore[k] = int("inf")
-            fscore[k] = int("inf")
-        gscore[(i,j)] = 0
-        fscore[(i,j)] = gscore[(i,j)] + self.taxicabDist(i,j)
-        heap.addNode(Node(fscore[(i,j)],(i,j)))
+            gscore[k] = float("inf")
+            fscore[k] = float("inf")
+        gscore[(0,0)] = 0
+        fscore[(0,0)] = gscore[(0,0)] + self.taxicabDist(0,0)
+        heap.addNode(Node(fscore[(0,0)],(0,0)))
         while heap.heapSize() > 0:
             current = heap.getMin()
             if current.data == (self.num_cols-1, self.num_rows-1):
-                return self.showPath(came_from, current)
+                print("path found")
+                return self.showPath(came_from, current.data)
             heap.removeMin()
-            neighbors = self.maze_graph[(i,j)]
+            neighbors = self.maze_graph[current.data]
             for n in neighbors:
-                direction = n[0]
-                n_idx=n[1]
+                valid = False
+                direction, n_idx = n[0], n[1]
                 if direction == "up" and self.cells[n_idx[0]][n_idx[1]].has_bottom_wall == False:
                     valid = True
                 elif direction == "down" and self.cells[n_idx[0]][n_idx[1]].has_top_wall == False:
@@ -74,7 +83,8 @@ class Maze:
                         fscore[n_idx] = gscore[n_idx] + self.taxicabDist(*n_idx)
                         if Node(fscore[n_idx], n_idx) not in heap.heap:
                             heap.addNode(Node(fscore[n_idx], n_idx))
-        print("No path found")
+                else:
+                    valid = False
         return
 
     def dfs(self, i=0, j=0):
@@ -134,8 +144,8 @@ class Maze:
                 self.buildGraph()
                 self.breakWalls()
                 self.resetVisited()
-                self.solve(algo="dfs")
-                self.showGraph()
+                self.solve(algo="A*")
+                #self.showGraph()
             else: #For testing purposes
                 for i, cols in enumerate(self.cells):
                     for j, _ in enumerate(cols):
