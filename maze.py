@@ -2,6 +2,7 @@ from shapes import Cell
 import time
 import random
 import numpy as np
+from heap import MinHeap, Node
 
 class Maze:
     def __init__(self, x1, y1, num_cols, num_rows, cell_size_x, cell_size_y, win=None, seed = None):
@@ -18,11 +19,65 @@ class Maze:
         if seed:
             random.seed(seed)
         self.createCells()
-    
-    def aStar(self, ):
-        pass
 
-    def solve(self, i=0, j=0):
+    def solve(self, algo="dfs"):
+        if algo == "dfs":
+            self.dfs()
+        if algo == "A*":
+            self.aStar()
+    def showPath(self, came_from, current):
+        path = [current]
+        while current in came_from.keys():
+            current = came_from[current]
+            path.insert(0,current)
+        return path
+
+    def taxicabDist(self,i,j):
+        return (self.num_cols-i) + (self.num_rows-j) - 2
+
+    def aStar(self, ):
+        heap = MinHeap()
+        came_from = {}
+        gscore = {}
+        fscore = {}
+        i,j = 0,0
+        d = 1
+        for k in self.maze_graph:
+            gscore[k] = int("inf")
+            fscore[k] = int("inf")
+        gscore[(i,j)] = 0
+        fscore[(i,j)] = gscore[(i,j)] + self.taxicabDist(i,j)
+        heap.addNode(Node(fscore[(i,j)],(i,j)))
+        while heap.heapSize() > 0:
+            current = heap.getMin()
+            if current.data == (self.num_cols-1, self.num_rows-1):
+                return self.showPath(came_from, current)
+            heap.removeMin()
+            neighbors = self.maze_graph[(i,j)]
+            for n in neighbors:
+                direction = n[0]
+                n_idx=n[1]
+                if direction == "up" and self.cells[n_idx[0]][n_idx[1]].has_bottom_wall == False:
+                    valid = True
+                elif direction == "down" and self.cells[n_idx[0]][n_idx[1]].has_top_wall == False:
+                    valid = True  
+                elif direction == "right" and self.cells[n_idx[0]][n_idx[1]].has_left_wall == False:
+                    valid = True
+                else:
+                    if direction == "left" and self.cells[n_idx[0]][n_idx[1]].has_right_wall == False:
+                        valid = True
+                if valid:
+                    tentative_gscore = gscore[current.data] + d
+                    if tentative_gscore < gscore[n_idx]:
+                        came_from[n_idx] = current.data
+                        gscore[n_idx] = tentative_gscore
+                        fscore[n_idx] = gscore[n_idx] + self.taxicabDist(*n_idx)
+                        if Node(fscore[n_idx], n_idx) not in heap.heap:
+                            heap.addNode(Node(fscore[n_idx], n_idx))
+        print("No path found")
+        return
+
+    def dfs(self, i=0, j=0):
         self.animate(0.002)
         current = self.cells[i][j]
         if current == self.cells[-1][-1]:
@@ -35,26 +90,26 @@ class Maze:
             to_cell = self.cells[n_idx[0]][n_idx[1]]
             if direction == "up" and to_cell.has_bottom_wall == False and to_cell.visited == False:
                 current.drawMove(to_cell)
-                solved = self.solve(n_idx[0], n_idx[1])
+                solved = self.dfs(n_idx[0], n_idx[1])
                 if solved == True:
                     return True
                 current.drawMove(to_cell, undo=True)
             elif direction == "down" and to_cell.has_top_wall == False and to_cell.visited == False:
                 current.drawMove(to_cell)
-                solved = self.solve(n_idx[0], n_idx[1])
+                solved = self.dfs(n_idx[0], n_idx[1])
                 if solved == True:
                     return True
                 current.drawMove(to_cell, undo=True)
             elif direction == "right" and to_cell.has_left_wall == False and to_cell.visited == False:
                 current.drawMove(to_cell)
-                solved = self.solve(n_idx[0], n_idx[1])
+                solved = self.dfs(n_idx[0], n_idx[1])
                 if solved == True:
                     return True
                 current.drawMove(to_cell, undo=True)
             else:
                 if direction == "left" and to_cell.has_right_wall == False and to_cell.visited == False:
                     current.drawMove(to_cell)
-                    solved = self.solve(n_idx[0], n_idx[1])
+                    solved = self.dfs(n_idx[0], n_idx[1])
                     if solved == True:
                         return True
                     current.drawMove(to_cell, undo=True)
@@ -79,7 +134,8 @@ class Maze:
                 self.buildGraph()
                 self.breakWalls()
                 self.resetVisited()
-                self.solve()
+                self.solve(algo="dfs")
+                self.showGraph()
             else: #For testing purposes
                 for i, cols in enumerate(self.cells):
                     for j, _ in enumerate(cols):

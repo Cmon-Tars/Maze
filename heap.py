@@ -1,18 +1,5 @@
 from graphviz import Digraph
 
-def create_graph(min_heap, file_name = "output"):
-    dot = Digraph()
-    for i in range(len(min_heap)):
-        dot.node(str(i), str(min_heap[i]))
-    for i in range(len(min_heap)):
-        left = 2 * i + 1
-        right = 2 * i + 2
-        if left < len(min_heap):
-            dot.edge(str(i), str(left))
-        if right < len(min_heap):
-            dot.edge(str(i), str(right))
-    dot.render(file_name, format='svg')
-
 class Node:
     def __init__(self, value, data=None) -> None:
         self.val = value
@@ -34,7 +21,13 @@ class MinHeap:
         return self.heap[0]
     
     def removeMin(self):
+        if self.heapSize() == 0:
+            return None
+        if self.heapSize() == 0:
+            return self.heap.pop()
         self.heap.pop(0)
+        self.heap[0] = self.heap.pop()
+        self.downHeap(0)
     
     def parent(self, i):
         return self.heap[(i-1)//2]
@@ -74,3 +67,16 @@ class MinHeap:
         self.heap.append(node)
         self.bubbleUp()
         self.heapify()
+    
+    def create_graph(self, file_name = "output"):
+        dot = Digraph()
+        for i in range(self.heapSize):
+            dot.node(str(i), str(self.heap[i]))
+        for i in range(self.heapSize()):
+            left = 2 * i + 1
+            right = 2 * i + 2
+            if left < self.heapSize():
+                dot.edge(str(i), str(left))
+            if right < self.heapSize():
+                dot.edge(str(i), str(right))
+        dot.render(file_name, format='svg')

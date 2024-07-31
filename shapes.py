@@ -25,6 +25,7 @@ class Cell:
     def __init__(self, win: Window = None):
         self.has_left_wall, self.has_right_wall, self.has_top_wall, self.has_bottom_wall =  [None for _ in range(4)]
         self.x1 = None
+        self.val = None
         self.y1 = None
         self.x2 = None
         self.y2 = None
